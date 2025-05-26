@@ -1,0 +1,117 @@
+class Solution {
+
+    private:
+    #define um unordered_map
+    #define vii vector<int> ind(n,0)
+    #define pb push_back
+  #define vvid26 vector<vector<int>> dp(n,vector<int>(26,0))
+
+
+
+    
+public:
+    int largestPathValue(string colors, vector<vector<int>>& edges) {
+        //apan phle adjancency list bnaenge
+        um<int, vector<int>> adj;
+        int n=colors.size();
+
+        //this will create indegree arr to track incoming edges 
+        vii;
+
+        for(auto it:edges){
+            adj[it[0]].pb(it[1]); //to create edges from it[0] to it[1];
+            ind[it[1]]++; //increase in-degree of destination node
+
+
+
+
+
+        }
+
+
+//apn yha queue to initialize krenge for topological sort (kahn) algorithm
+        queue<int> q;
+        for(int i=0;i<n;i++){
+            if(ind[i]==0){
+                q.push(i);  //to push all nodes with indegree 0;
+
+
+
+            }
+        }
+//agr koi starting pnts nhi hai toh cycle exist nhi krta 
+        if(q.size()==0){
+            return -1;
+        }
+
+
+//yha apan dp table bnaynege to store other frequencies 
+//dp[i][c]=> max cnt of color c in any path ending at node i
+vvid26;
+
+int maxi=-1; //to keep track of the answer
+
+int cnt=0; //to cnt how many nodes are processed
+
+
+//bfs perform krenge (topological sorting)
+
+while(!q.empty()){
+    int frnt=q.front(); //curr node process krne ke liye
+
+    q.pop();
+    cnt++; //cnt no of processed nodes 
+
+    int ch=colors[frnt]-'a'; //color of curr node (0-25)
+
+    dp[frnt][ch]++; //yeh color freq increase krega at this node 
+    maxi=max(maxi,dp[frnt][ch]); //update max value
+
+
+    //visit all neighbours of the curr nodes 
+    for(auto it:adj[frnt]){
+        for(int i=0;i<26;i++){
+            dp[it][i]=max(dp[it][i],dp[frnt][i]);
+
+            maxi=max(maxi,dp[it][i]);
+
+
+
+        }
+
+//yeh in-degree ko reduce krega @neighbour
+        ind[it]--;
+        if(ind[it]<=0){
+            q.push(it); //if in-degree becomes zero add to queue
+
+
+
+
+
+        }
+    }
+
+
+}
+
+//if not all nodes were processed, a cyc exist -> return -1;
+
+
+
+  if(cnt!=n){
+    return -1;
+
+
+  }
+
+//max color freq found in my path
+
+  return maxi;
+
+
+
+
+
+
+    }
+};
